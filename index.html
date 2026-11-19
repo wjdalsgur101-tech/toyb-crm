@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5">
+<title>TOYB 영업 CRM</title>
+<meta name="theme-color" content="#070A0F">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TOYB CRM">
+<meta name="description" content="TOYB 영업 CRM — 대표자 전용">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="favicon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<!-- ══ LOCK ══ -->
+<div id="lock">
+  <div class="lockcard">
+    <div class="logo">T</div>
+    <h1>TOYB 영업 CRM</h1>
+    <p>대표자 전용 · 잠금 해제가 필요합니다</p>
+    <form id="lockForm" autocomplete="off">
+      <div class="passrow">
+        <input id="pass" type="password" inputmode="text" autocapitalize="off" autocorrect="off"
+               spellcheck="false" placeholder="잠금 비밀번호" aria-label="잠금 비밀번호" enterkeyhint="go">
+        <button type="submit" id="unlockBtn">열기</button>
+      </div>
+    </form>
+    <div class="lockmsg" id="lockMsg"></div>
+    <label class="lockfoot"><input type="checkbox" id="remember" checked> 이 기기에서 자동 열기</label>
+    <p class="note" style="margin-top:18px">데이터는 잠금 비밀번호로 암호화되어 있습니다.<br>비밀번호를 모르면 화면을 열어도 DB 내용은 복호화되지 않습니다.</p>
+  </div>
+</div>
+
+<!-- ══ SHELL ══ -->
+<div id="shell" class="hide">
+  <header class="topbar"><div class="inner">
+    <div class="brand">
+      <div class="mark">T</div>
+      <div><b>TOYB 영업 CRM</b><span id="topSub">불러오는 중…</span></div>
+    </div>
+    <div class="grow"></div>
+    <button class="iconbtn" id="btnRefresh" title="새로고침" aria-label="데이터 새로고침">
+      <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>
+    </button>
+    <button class="iconbtn" id="btnLock" title="잠금" aria-label="잠금">
+      <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+    </button>
+  </div></header>
+
+  <main>
+    <nav class="desk-tabs" id="deskTabs">
+      <button data-view="leads" class="on">리드</button>
+      <button data-view="summary">요약</button>
+      <button data-view="add">신규 등록</button>
+      <button data-view="sync">동기화</button>
+      <button data-view="settings">설정</button>
+    </nav>
+
+    <!-- ── 리드 ── -->
+    <section id="view-leads">
+      <div class="kpis" id="kpis"></div>
+      <div class="tools">
+        <div class="searchrow">
+          <div class="search">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+            <input id="q" type="search" placeholder="업체명·이메일·메모 검색" aria-label="검색">
+            <button id="qClear" class="hide" aria-label="지우기">×</button>
+          </div>
+          <button class="iconbtn" id="btnFilterReset" title="필터 초기화" aria-label="필터 초기화">
+            <svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+          </button>
+        </div>
+        <div class="chips" id="chips"></div>
+        <div class="selrow">
+          <select id="fState" aria-label="발송 상태">
+            <option value="">발송 상태 전체</option>
+            <option value="발송완료">발송완료</option>
+            <option value="미발송">미발송</option>
+          </select>
+          <select id="fResult" aria-label="영업 결과">
+            <option value="">영업 결과 전체</option>
+            <option value="회신대기">회신대기</option>
+            <option value="회신수신">회신수신</option>
+            <option value="미팅·검토">미팅·검토</option>
+            <option value="재검토">재검토</option>
+            <option value="계약">계약</option>
+            <option value="보류">보류</option>
+            <option value="거절">거절</option>
+            <option value="수신거부">수신거부</option>
+          </select>
+          <select id="fSort" aria-label="정렬">
+            <option value="recent">최근 소통순</option>
+            <option value="name">업체명순</option>
+            <option value="cat">카테고리순</option>
+            <option value="sent">발송일순</option>
+          </select>
+        </div>
+      </div>
+      <div class="listhead"><span id="listCount">—</span><span id="listHint"></span></div>
+      <div class="rows" id="rows"></div>
+      <button class="more hide" id="btnMore">더 보기</button>
+    </section>
+
+    <!-- ── 요약 ── -->
+    <section id="view-summary" class="hide">
+      <div class="mini3" id="sumMini"></div>
+      <div class="card">
+        <h3>카테고리별 현황 <span>8개 카테고리</span></h3>
+        <div class="bars" id="sumCats"></div>
+      </div>
+      <div class="card">
+        <h3>영업 결과 퍼널 <span>발송 완료 기준</span></h3>
+        <div class="bars" id="sumFunnel"></div>
+      </div>
+      <div class="card">
+        <h3>다음 액션 <span>가까운 순 상위 8건</span></h3>
+        <div class="act" id="sumActs"></div>
+      </div>
+      <div class="card">
+        <h3>소통 타임라인 <span>실제 기록</span></h3>
+        <div class="tl" id="sumTl"></div>
+      </div>
+    </section>
+
+    <!-- ── 신규 등록 ── -->
+    <section id="view-add" class="hide">
+      <div class="card">
+        <h3>새 영업처 등록 <span>내 기록 · 이 기기에 저장</span></h3>
+        <form id="addForm">
+          <div class="grid2">
+            <div class="field"><label>카테고리 *</label><select name="cat" required id="addCat"></select></div>
+            <div class="field"><label>세부구분</label><input name="sub" placeholder="예: 중소 식자재 유통"></div>
+          </div>
+          <div class="field"><label>업체명 *</label><input name="name" required placeholder="예: ○○식자재"></div>
+          <div class="grid2">
+            <div class="field"><label>이메일</label><input name="email" type="email" inputmode="email" placeholder="name@example.com"></div>
+            <div class="field"><label>연락처</label><input name="phone" inputmode="tel" placeholder="02-000-0000"></div>
+          </div>
+          <div class="grid2">
+            <div class="field"><label>담당자</label><input name="owner" placeholder="예: 김○○ 과장"></div>
+            <div class="field"><label>발송일</label><input name="sent" type="date"></div>
+          </div>
+          <div class="grid2">
+            <div class="field"><label>발송 상태</label>
+              <select name="state"><option>미발송</option><option>발송완료</option></select></div>
+            <div class="field"><label>영업 결과</label>
+              <select name="result"><option value="">—</option><option>회신대기</option><option>회신수신</option>
+                <option>미팅·검토</option><option>재검토</option><option>계약</option><option>보류</option>
+                <option>거절</option><option>수신거부</option></select></div>
+          </div>
+          <div class="field"><label>메모</label><textarea name="memo" placeholder="발굴 경로, 관찰 포인트, 승인 필요 사항 등"></textarea></div>
+          <div class="btnrow">
+            <button class="btn primary" type="submit" style="flex:1">등록하기</button>
+            <button class="btn ghost" type="reset">초기화</button>
+          </div>
+        </form>
+      </div>
+      <div class="card">
+        <h3>등록 안내</h3>
+        <div class="note">
+          · 등록한 리드는 이 브라우저(localStorage)에 저장됩니다. PC와 폰은 각각 따로 쌓이므로,
+          [동기화]에서 JSON으로 내보내 다른 기기로 옮기거나 Google 시트로 보내세요.<br>
+          · 광고성 메일 발송은 (광고) 표기·수신거부 문구·080 번호가 필요합니다. 수신거부 요청이 오면
+          해당 리드의 [수신거부] 토글을 켜면 영구 제외로 집계됩니다.
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 동기화 ── -->
+    <section id="view-sync" class="hide">
+      <div class="card">
+        <h3>내보내기 <span>백업 · 다른 기기로 이동</span></h3>
+        <div class="btnrow">
+          <button class="btn primary sm" id="btnExportJson">JSON 내보내기</button>
+          <button class="btn ghost sm" id="btnExportCsv">CSV 내보내기</button>
+        </div>
+        <p class="note" style="margin:10px 0 0">전체 리드(원본+내 기록)를 한 파일로 내려받습니다. 파일은 이 기기의 다운로드 폴더에 저장됩니다.</p>
+      </div>
+      <div class="card">
+        <h3>가져오기 <span>JSON 병합</span></h3>
+        <input type="file" id="importFile" accept="application/json,.json" class="hide">
+        <button class="btn ghost sm" id="btnImport">JSON 파일 선택</button>
+        <p class="note" style="margin:10px 0 0">같은 리드가 있으면 가져온 값으로 덮어씁니다. 새 리드는 추가됩니다. 가져오기 전에 현재 상태를 JSON으로 내보내 두세요.</p>
+      </div>
+      <div class="card">
+        <h3>Google 시트 연동 <span>Apps Script 웹훅</span></h3>
+        <div class="field"><label>웹훅 URL (Apps Script 웹 앱)</label>
+          <input id="hookUrl" placeholder="https://script.google.com/macros/s/.../exec" inputmode="url"></div>
+        <div class="btnrow">
+          <button class="btn primary sm" id="btnHookSave">저장</button>
+          <button class="btn ghost sm" id="btnHookTest">연결 테스트</button>
+          <button class="btn ghost sm" id="btnHookPush">변경분 전송</button>
+        </div>
+        <div class="note" id="hookState" style="margin-top:10px">설정된 웹훅이 없습니다. 아래 코드를 구글 시트의 [확장 프로그램 → Apps Script]에 붙여 넣고 웹 앱으로 배포하면 URL이 나옵니다.</div>
+        <details>
+          <summary>Apps Script 코드 보기 (복사해서 시트에 붙여넣기)</summary>
+          <pre id="gasCode"></pre>
+          <button class="btn ghost sm" id="btnCopyGas" style="margin-top:8px">코드 복사</button>
+        </details>
+        <p class="note" style="margin:10px 0 0">전송 형식: <code>POST {event, lead, at}</code> JSON. 시트에는 리드별 마지막 상태와 소통 히스토리가 누적됩니다.</p>
+      </div>
+      <div class="card">
+        <h3>데이터 기준</h3>
+        <div class="statgrid" id="syncStats"></div>
+      </div>
+    </section>
+
+    <!-- ── 설정 ── -->
+    <section id="view-settings" class="hide">
+      <div class="card">
+        <h3>잠금과 기기</h3>
+        <div class="switch" id="rememberWrap" role="switch" aria-checked="true" tabindex="0">
+          <div class="lb"><b>이 기기에서 자동 열기</b><span>끄면 앱을 열 때마다 비밀번호를 묻습니다</span></div>
+          <div class="tgl on blue" id="rememberTgl"></div>
+        </div>
+        <div class="btnrow" style="margin-top:10px">
+          <button class="btn ghost sm" id="btnLock2">지금 잠금</button>
+          <button class="btn ghost sm" id="btnInstall">앱 설치 안내</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>내 기록 관리</h3>
+        <div class="statgrid" id="mineStats"></div>
+        <div class="btnrow" style="margin-top:12px">
+          <button class="btn danger sm" id="btnResetMine">내 기록 초기화</button>
+        </div>
+        <p class="note" style="margin:10px 0 0">내 기록 = 이 기기에서 직접 추가·수정한 값. 원본 DB(1,448건)는 다시 받으면 그대로 복원됩니다.</p>
+      </div>
+      <div class="card">
+        <h3>보안</h3>
+        <div class="chk"><i>✓</i><span>화면의 리드 데이터는 <b>AES-256-GCM</b>으로 암호화되어 있고, 키는 잠금 비밀번호에서 <b>PBKDF2-SHA256 40만 회</b>로 유도합니다. 비밀번호 없이는 데이터를 열 수 없습니다.</span></div>
+        <div class="chk"><i>✓</i><span>검색엔진 색인 차단(<code>noindex</code>·<code>robots.txt</code>)이 걸려 있습니다.</span></div>
+        <div class="chk"><i>✓</i><span>협력사명·개인 휴대폰 번호는 데이터에서 제외·마스킹했습니다.</span></div>
+        <p class="note" style="margin:10px 0 0">공용 PC나 남의 기기에서는 ‘이 기기에서 자동 열기’를 끄고 사용하세요.</p>
+      </div>
+      <div class="card">
+        <h3>정보</h3>
+        <div class="note" id="aboutInfo"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 하단 탭 -->
+  <nav class="nav" id="nav">
+    <button data-view="leads" class="on"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>리드</button>
+    <button data-view="summary"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>요약</button>
+    <button data-view="add"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>신규</button>
+    <button data-view="sync"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-15 6.7M3 12a9 9 0 0 1 15-6.7"/><path d="M18 2v4h-4M6 22v-4h4"/></svg>동기화</button>
+    <button data-view="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>설정</button>
+  </nav>
+</div>
+
+<!-- ══ DETAIL SHEET ══ -->
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheetDetail" aria-hidden="true">
+  <div class="grab"></div>
+  <div class="sh-head">
+    <div class="t"><h2 id="dName">—</h2><div class="s" id="dSub"></div></div>
+    <button class="xbtn" data-close="1" aria-label="닫기">×</button>
+  </div>
+  <div class="body" id="dBody"></div>
+  <div class="foot">
+    <button class="btn ghost" data-close="1">닫기</button>
+    <button class="btn primary" id="dSave">저장</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>

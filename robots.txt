@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /
+
+# TOYB 영업 CRM — 대표자 전용. 검색엔진 색인 차단.

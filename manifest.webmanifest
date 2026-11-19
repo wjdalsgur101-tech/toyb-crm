@@ -1,0 +1,21 @@
+{
+  "name": "TOYB 영업 CRM",
+  "short_name": "TOYB CRM",
+  "description": "TOYB 대표자 전용 영업 CRM",
+  "lang": "ko",
+  "start_url": "./?src=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#070A0F",
+  "theme_color": "#070A0F",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "신규 등록", "url": "./?v=add" },
+    { "name": "동기화", "url": "./?v=sync" }
+  ]
+}
