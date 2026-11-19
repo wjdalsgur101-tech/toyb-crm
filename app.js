@@ -647,7 +647,7 @@ const today = () => new Date().toISOString().slice(0, 10);
 $('#lockForm').addEventListener('submit', async ev => {
   ev.preventDefault();
   const btn = $('#unlockBtn'), msg = $('#lockMsg');
-  const pass = $('#pass').value;
+  const pass = $('#pass').value.trim();
   if (!pass) { msg.textContent = '비밀번호를 입력하세요'; return; }
   btn.disabled = true; btn.textContent = '여는 중'; msg.textContent = '';
   try {
