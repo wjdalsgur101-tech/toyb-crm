@@ -15,16 +15,16 @@ const LS = {
 const CAT_COLOR = {
   'VC_투자처': '#38BDF8', '공공_협회': '#A855F7', '식자재_유통사': '#22C55E',
   '지역_상인회': '#06B6D4', 'POS_VAN': '#F59E0B', '세무_배달_공유주방': '#F472B6',
-  '프랜차이즈_본사': '#3B82F6', '전국_일반매장': '#EF4444'
+  '프랜차이즈_본사': '#3B82F6', '전국_일반매장': '#EF4444', '운영_제휴': '#94A3B8'
 };
 const CAT_LABEL = {
   'VC_투자처': 'VC·투자처', '공공_협회': '공공·협회', '식자재_유통사': '식자재 유통',
   '지역_상인회': '지역 상인회', 'POS_VAN': 'POS·VAN', '세무_배달_공유주방': '세무·배달·공유주방',
-  '프랜차이즈_본사': '프랜차이즈 본사', '전국_일반매장': '전국 일반매장'
+  '프랜차이즈_본사': '프랜차이즈 본사', '전국_일반매장': '전국 일반매장', '운영_제휴': '운영·제휴'
 };
 const RESULT_TAG = {
   '회신대기': 't-waitres', '회신수신': 't-reply', '미팅·검토': 't-meet', '재검토': 't-meet',
-  '계약': 't-deal', '보류': 't-hold', '거절': 't-hold', '수신거부': 't-refuse'
+  '계약': 't-deal', '계약완료': 't-deal', '보류': 't-hold', '거절': 't-hold', '수신거부': 't-refuse'
 };
 
 const state = {
@@ -160,7 +160,7 @@ function rebuild() {
   state.leads = base.concat(added);
 }
 const isSent = l => l.state === '발송완료';
-const isReplied = l => ['회신수신', '미팅·검토', '재검토', '계약'].includes(l.result);
+const isReplied = l => ['회신수신', '미팅·검토', '재검토', '계약', '계약완료'].includes(l.result);
 const isMeet = l => ['미팅·검토', '재검토'].includes(l.result);
 
 /* ───────── render ───────── */

@@ -1,5 +1,5 @@
 /* TOYB 영업 CRM service worker */
-const V = 'toyb-crm-v2';
+const V = 'toyb-crm-v3';
 const SHELL = [
   './', './index.html', './app.css', './app.js', './manifest.webmanifest',
   './icon-192.png', './icon-512.png', './apple-touch-icon.png', './favicon.png'
