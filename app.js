@@ -15,12 +15,14 @@ const LS = {
 const CAT_COLOR = {
   'VC_투자처': '#38BDF8', '공공_협회': '#A855F7', '식자재_유통사': '#22C55E',
   '지역_상인회': '#06B6D4', 'POS_VAN': '#F59E0B', '세무_배달_공유주방': '#F472B6',
-  '프랜차이즈_본사': '#3B82F6', '전국_일반매장': '#EF4444', '운영_제휴': '#94A3B8'
+  '프랜차이즈_본사': '#3B82F6', '전국_일반매장': '#EF4444', '운영_제휴': '#94A3B8',
+  'TM_본사전화': '#0EA5E9'
 };
 const CAT_LABEL = {
   'VC_투자처': 'VC·투자처', '공공_협회': '공공·협회', '식자재_유통사': '식자재 유통',
   '지역_상인회': '지역 상인회', 'POS_VAN': 'POS·VAN', '세무_배달_공유주방': '세무·배달·공유주방',
-  '프랜차이즈_본사': '프랜차이즈 본사', '전국_일반매장': '전국 일반매장', '운영_제휴': '운영·제휴'
+  '프랜차이즈_본사': '프랜차이즈 본사', '전국_일반매장': '전국 일반매장', '운영_제휴': '운영·제휴',
+  'TM_본사전화': 'TM 본사전화'
 };
 const RESULT_TAG = {
   '회신대기': 't-waitres', '회신수신': 't-reply', '미팅·검토': 't-meet', '재검토': 't-meet',
@@ -365,7 +367,7 @@ function renderSettings() {
   ].map(([k, v]) => `<div class="b"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
   const m = state.data.meta || {};
   $('#aboutInfo').innerHTML = `TOYB 영업 CRM · 대표자 전용<br>
-    데이터 ${(state.data.leads || []).length.toLocaleString()}건 (프랜차이즈 본사 ${(m.counts ? m.counts.franchise : 0).toLocaleString()}건 포함) · 기준 ${m.builtAt || '—'}<br>
+    데이터 ${(state.data.leads || []).length.toLocaleString()}건 (프랜차이즈 본사 ${(m.counts ? m.counts.franchise : 0).toLocaleString()}건 · TM 본사전화 ${(m.counts && m.counts.tmPhone ? m.counts.tmPhone : 0).toLocaleString()}건 포함) · 기준 ${m.builtAt || '—'}<br>
     빌드 ${new Date().toISOString().slice(0, 10)} · v1.0`;
 }
 
